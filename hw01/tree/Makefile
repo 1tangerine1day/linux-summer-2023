@@ -2,17 +2,18 @@
 .PHONY: all clean
 
 CC=gcc
-
 CFLAGS=-O2 -Wall -Wextra
 
-SRCS=$(filter %.c, $(shell ls ./))
+MAIN=test.c
+EXE=test.out
+
+SRCS=$(filter-out $(MAIN), $(wildcard *.c))
 OBJS=$(SRCS: %.c = %.o)
-OUTS=a.out
 
-all: $(OUTS)
+all: $(EXE)
 
-$(OUTS):
-	$(CC) $(CFLAGS) $(SRCS) -o $@
+$(EXE): $(OBJS)
+	$(CC) $(CFLAGS) $(MAIN) -o $@ $^
 
 clean:
 	rm -rf *.o *.out
