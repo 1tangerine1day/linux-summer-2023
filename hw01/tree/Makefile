@@ -2,7 +2,8 @@
 .PHONY: all clean
 
 CC=gcc
-CFLAGS=-O2 -Wall -Wextra
+#CFLAGS=-O2 -Wall -Wextra
+CFLAGS=-O2 -w
 
 MAIN=test.c
 EXE=test.out
