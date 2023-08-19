@@ -25,6 +25,13 @@ struct rb_root
 #define rb_is_red(r)   (!rb_color(r))
 #define rb_is_black(r) rb_color(r)
 
+#define rb_left(n) (n->rb_left)
+#define rb_right(n) (n->rb_right)
+#define rb_root(r) (r->rb_node)
+
+#define rb_insert(p_rb_r, p_rb_n) rb_insert_color(p_rb_n, p_rb_r)
+#define rb_remove(p_rb_r, p_rb_n) rb_erase(p_rb_n, p_rb_r)
+
 static inline void rb_set_red(struct rb_node *rb)
 {
     rb->rb_parent_color &= RB_RED;

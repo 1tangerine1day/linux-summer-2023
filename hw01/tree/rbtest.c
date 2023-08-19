@@ -5,34 +5,34 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "stree.h"
+#include "rbtree.h"
 
 #define container_of(ptr, type, member) \
     ((type *) ((char *) (ptr) - (offsetof(type, member))))
 
-#define treeint_entry(ptr) container_of(ptr, struct treeint, st_n)
+#define treeint_entry(ptr) container_of(ptr, struct treeint, rb_n)
 
 struct treeint {
     int value;
-    struct st_node st_n;
+    struct rb_node rb_n;
 };
 
-static struct st_root *tree;
+static struct rb_root *tree;
 
 int treeint_init()
 {
-    tree = calloc(sizeof(struct st_root), 1);
+    tree = calloc(sizeof(struct rb_root), 1);
     assert(tree);
     return 0;
 }
 
-static void __treeint_destroy(struct st_node *n)
+static void __treeint_destroy(struct rb_node *n)
 {
-    if (st_left(n))
-        __treeint_destroy(st_left(n));
+    if (rb_left(n))
+        __treeint_destroy(rb_left(n));
 
-    if (st_right(n))
-        __treeint_destroy(st_right(n));
+    if (rb_right(n))
+        __treeint_destroy(rb_right(n));
 
     struct treeint *i = treeint_entry(n);
     free(i);
@@ -41,8 +41,8 @@ static void __treeint_destroy(struct st_node *n)
 int treeint_destroy()
 {
     assert(tree);
-    if (st_root(tree))
-        __treeint_destroy(st_root(tree));
+    if (tree)
+        __treeint_destroy(tree);
 
     free(tree);
     return 0;
@@ -50,29 +50,11 @@ int treeint_destroy()
 
 struct treeint *treeint_insert(int a)
 {
-    struct st_node *p = NULL;
-    enum st_dir d;
-    for (struct st_node *n = st_root(tree); n;) {
-        struct treeint *t = container_of(n, struct treeint, st_n);
-        if (a == t->value)
-            return t;
-
-        p = n;
-
-        if (a < t->value) {
-            n = st_left(n);
-            d = LEFT;
-        } else if (a > t->value) {
-            n = st_right(n);
-            d = RIGHT;
-        }
-    }
-
     struct treeint *i = calloc(sizeof(struct treeint), 1);
-    if (st_root(tree))
-        st_insert(&st_root(tree), p, &i->st_n, d);
+    if (rb_root(tree))
+        rb_insert(rb_root(tree), &i->rb_n);
     else
-        st_root(tree) = &i->st_n;
+        rb_root(tree) = &i->rb_n;
 
     i->value = a;
     return i;
@@ -80,16 +62,16 @@ struct treeint *treeint_insert(int a)
 
 struct treeint *treeint_find(int a)
 {
-    struct st_node *n = st_root(tree);
+    struct rb_node *n = rb_root(tree);
     while (n) {
         struct treeint *t = treeint_entry(n);
         if (a == t->value)
             return t;
 
         if (a < t->value)
-            n = st_left(n);
+            n = rb_left(n);
         else if (a > t->value)
-            n = st_right(n);
+            n = rb_right(n);
     }
 
     return 0;
@@ -101,28 +83,28 @@ int treeint_remove(int a)
     if (!n)
         return -1;
 
-    st_remove(&st_root(tree), &n->st_n);
+    rb_remove(rb_root(tree), &n->rb_n);
     free(n);
     return 0;
 }
 
 /* ascending order */
-static void __treeint_dump(struct st_node *n, int depth)
+static void __treeint_dump(struct rb_node *n, int depth)
 {
     if (!n)
         return;
 
-    __treeint_dump(/* FFFF */st_left(n), depth + 1);
+    __treeint_dump(/* FFFF */rb_left(n), depth + 1);
 
     struct treeint *v = treeint_entry(n);
     printf("%d\n", v->value);
 
-    __treeint_dump(/* GGGG */st_right(n), depth + 1);
+    __treeint_dump(/* GGGG */rb_right(n), depth + 1);
 }
 
 void treeint_dump()
 {
-    __treeint_dump(st_root(tree), 0);
+    __treeint_dump(rb_root(tree), 0);
 }
 
 int main()
