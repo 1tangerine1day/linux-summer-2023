@@ -208,9 +208,9 @@ void st_remove(struct st_node **root, struct st_node *del)
         if (del == *root)
             *root = least;
 
-        /* AAAA */
+		/* AAAA */
 		st_replace_right(del, least);
-        /* BBBB */
+		/* BBBB */
 		st_update(root, st_parent(least));
         return;
     }
@@ -220,9 +220,9 @@ void st_remove(struct st_node **root, struct st_node *del)
         if (del == *root)
             *root = most;
 
-        /* CCCC */
+		/* CCCC */
 		st_replace_left(del, most);
-        /* DDDD */
+		/* DDDD */
 		st_update(root, st_parent(most));
         return;
     }
